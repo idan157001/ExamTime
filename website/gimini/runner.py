@@ -54,6 +54,7 @@ class Gimini_Proccess():
         }
 def call_gimini_progress(file):
     """Sending Request to gimini and suffle the exam"""
+    print(os.environ.get('GIMINI_API_KEY'))
     gimini_client = Gimini_Proccess(file)
     try:
         data = gimini_client.run()
