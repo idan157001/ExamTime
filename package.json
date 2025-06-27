@@ -1,0 +1,13 @@
+{
+  "name": "testshuffle",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build:css": "npx tailwindcss -i ./website/static/css/tailwind.css -o ./website/static/css/tailwind.output.css --minify --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.1",
+    "postcss": "^8.4.31",
+    "autoprefixer": "^10.4.16"
+  }
+}

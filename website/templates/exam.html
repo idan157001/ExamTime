@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Exam</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/tailwind.output.css') }}">
+  <style>
+    body {
+      background: #f3f4f6;
+    }
+    .exam-card {
+      position: relative;
+      padding: 32px 24px;
+      max-width: 900px;
+      width: 100%;
+      margin: 40px auto;
+      text-align: center;
+      border-radius: 18px;
+      background: #fff;
+      color: #222;
+      overflow: visible;
+      z-index: 0;
+      box-shadow: 0 4px 24px 0 rgba(0,0,0,0.08);
+    }
+    .question-item {
+      margin-bottom: 32px;
+      border: 1px solid #e5e7eb;
+      padding: 24px 18px;
+      border-radius: 10px;
+      background-color: #f9f9f9;
+      text-align: right;
+      color: #222;
+      box-shadow: 0 2px 8px 0 rgba(0,0,0,0.03);
+    }
+    strong {
+      font-weight: bold;
+      color: #222;
+    }
+    .answers-list {
+      list-style-type: none;
+      padding: 0;
+      margin-top: 15px;
+      text-align: right;
+    }
+    .answers-list li {
+      border: none;
+      padding: 8px 0;
+    }
+    label {
+      display: block;
+      cursor: pointer;
+      margin-bottom: 8px;
+    }
+    input[type="radio"] {
+      margin-right: 10px;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 15px;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .correct-answer {
+      color: forestgreen;
+      display: none;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    #geminiData {
+      text-align: center;
+      margin-top: 30px;
+      max-width: 900px;
+    }
+    .loading-dots {
+      display: inline-block;
+    }
+    .loading-dots span {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background-color: #007bff;
+      border-radius: 50%;
+      margin: 0 2px;
+      animation: loading-dots 1.2s infinite both;
+    }
+    .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes loading-dots {
+      0%, 80%, 100% { transform: scale(0.7); opacity: 0.5; }
+      40% { transform: scale(1); opacity: 1; }
+    }
+  </style>
+</head>
+<body class="bg-white dark:bg-black transition-colors min-h-screen">
+  <header class="bg-white dark:bg-gray-900 shadow sticky top-0 z-10 border-b border-gray-200 dark:border-gray-800">
+    <div class="container mx-auto flex items-center justify-between py-2 px-4 min-h-14">
+      <a href="/" class="flex items-center gap-2 text-2xl font-extrabold text-blue-700 dark:text-green-300 tracking-tight">
+        <svg class="w-7 h-7 text-green-400 dark:text-green-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 20l9-5-9-5-9 5 9 5z"/><path d="M12 12V4m0 0L3 9m9-5l9 5"/></svg>
+        Exam App
+      </a>
+      <nav class="flex items-center gap-4">
+        <button id="dark-toggle" class="ml-4 p-2 rounded-full bg-blue-100 dark:bg-gray-800 hover:bg-blue-200 dark:hover:bg-gray-700 transition" title="Toggle dark mode" aria-label="Toggle dark mode">
+          <svg id="sun-icon" class="w-6 h-6 text-yellow-400 dark:hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+          </svg>
+          <svg id="moon-icon" class="w-6 h-6 text-gray-200 hidden dark:inline" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z"/>
+          </svg>
+        </button>
+      </nav>
+    </div>
+  </header>
+  <main class="flex-1 flex items-center justify-center mt-6">
+    <div class="exam-card animate">
+      <div id="geminiData">
+        <div class="loading-dots">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script>
+    // Dark mode toggle logic for nav button
+    const toggle = document.getElementById('dark-toggle');
+    const html = document.documentElement;
+    if (
+      localStorage.theme === 'dark' ||
+      (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
+    ) {
+      html.classList.add('dark');
+    } else {
+      html.classList.remove('dark');
+    }
+    if (toggle) {
+      toggle.addEventListener('click', () => {
+        html.classList.toggle('dark');
+        if (html.classList.contains('dark')) {
+          localStorage.theme = 'dark';
+        } else {
+          localStorage.theme = 'light';
+        }
+      });
+    }
+         document.addEventListener('DOMContentLoaded', function() {
+             const id = window.location.pathname.split('/').pop();
+             fetch(`/data/${id}`)
+                 .then(response => response.json())
+                 .then(data => {
+                     if (data.data) {
+                         renderQuestions(data.data);
+                     } else if (data.error) {
+                         document.getElementById('geminiData').textContent = 'Something went wrong';
+                     }
+                 })
+                 .catch(error => {
+                     document.getElementById('geminiData').textContent = 'Something went wrong';
+                 });
+         });
+         
+         function renderQuestions(data) {
+             const container = document.getElementById('geminiData');
+             // Remove loader and show test content
+             container.innerHTML = `<h3>${data.test_data}</h3><ul></ul>`;
+             const ul = container.querySelector('ul');
+             data.questions.forEach(item => {
+                 const li = document.createElement('li');
+                 li.className = 'question-item';
+                 li.innerHTML = `
+                     <p dir="rtl"><strong>Question ${item.question_number}:</strong> ${item.question_data}</p><br>
+                     <ul class="answers-list">
+                         ${item.answers.map(answer => `
+                             <li dir="rtl">
+                                 <label>
+                                     <input type="radio" name="question_${item.question_number}" value="${answer.answer}">
+                                     ${answer.answer}
+                                 </label>
+                             </li>
+                         `).join('')}
+                     </ul>
+                     <button type="button" onclick="showAnswer(${item.question_number})">Show Answer</button>
+                     <h2 id="correct-answer-${item.question_number}" class="correct-answer">${item.correct_answer.answer}</h2>
+                 `;
+                 ul.appendChild(li);
+             });
+         }
+         
+         function showAnswer(questionNumber) {
+             var correctAnswerElement = document.getElementById('correct-answer-' + questionNumber);
+             correctAnswerElement.style.display = 'block';
+         }
+  </script>
+</body>
+</html>

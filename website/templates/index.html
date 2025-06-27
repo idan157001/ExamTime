@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Time To Test</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/tailwind.output.css') }}">
+</head>
+<body class="bg-white dark:bg-black transition-colors min-h-screen">
+  <header class="bg-white dark:bg-gray-900 shadow sticky top-0 z-10 border-b border-gray-200 dark:border-gray-800">
+    <div class="container mx-auto flex items-center justify-between py-2 px-4 min-h-14">
+      <a href="/" class="flex items-center gap-2 text-2xl font-extrabold text-blue-700 dark:text-green-300 tracking-tight">
+        <svg class="w-7 h-7 text-green-400 dark:text-green-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 20l9-5-9-5-9 5 9 5z"/><path d="M12 12V4m0 0L3 9m9-5l9 5"/></svg>
+        Exam App
+      </a>
+      <nav class="flex items-center gap-4">
+        <!-- Dark mode toggle button -->
+        <button id="dark-toggle" class="ml-4 p-2 rounded-full bg-blue-100 dark:bg-gray-800 hover:bg-blue-200 dark:hover:bg-gray-700 transition" title="Toggle dark mode" aria-label="Toggle dark mode">
+          <svg id="sun-icon" class="w-6 h-6 text-yellow-400 dark:hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+          </svg>
+          <svg id="moon-icon" class="w-6 h-6 text-gray-200 hidden dark:inline" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z"/>
+          </svg>
+        </button>
+      </nav>
+    </div>
+  </header>
+  <main class="flex-1 flex items-center justify-center mt-6">
+    <div class="bg-white/90 dark:bg-gray-900/90 rounded-3xl shadow-2xl p-10 w-full max-w-xl mt-10 flex flex-col items-center transition-colors duration-300">
+      <h1 class="text-4xl font-extrabold mb-2 text-blue-700 dark:text-green-300 text-center drop-shadow">Time To Test</h1>
+      <p class="mb-6 text-gray-600 dark:text-gray-300 text-center text-lg">
+        Upload your exam file and let us do the rest.<br>
+        Get instant, organized questions and answers.
+      </p>
+      <form method="post" enctype="multipart/form-data" class="w-full flex flex-col items-center gap-4 mb-6">
+        <label class="w-full flex flex-col items-center px-4 py-6 bg-blue-50 dark:bg-gray-800 text-blue-700 dark:text-green-200 rounded-lg shadow cursor-pointer hover:bg-blue-100 dark:hover:bg-gray-700 transition border-2 border-dashed border-blue-300 dark:border-green-400">
+          <svg class="w-10 h-10 mb-2 text-blue-400 dark:text-green-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg>
+          <span class="font-semibold">Click to upload exam file</span>
+          <input type="file" name="file" class="hidden" required>
+        </label>
+        <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-green-400 dark:from-green-700 dark:to-blue-900 text-white font-bold py-2 rounded-lg shadow hover:from-blue-700 hover:to-green-500 dark:hover:from-green-800 dark:hover:to-blue-800 transition text-lg">Suffle it</button>
+      </form>
+      <div class="w-full mt-4">
+        <h2 class="text-lg font-semibold mb-2 text-blue-600 dark:text-green-200">Why use Exam App?</h2>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="flex flex-col items-center bg-green-50 dark:bg-green-900 rounded-xl p-3 shadow">
+            <span class="text-2xl">⚡</span>
+            <span class="text-sm text-gray-700 dark:text-gray-200 mt-1">Fast Upload</span>
+          </div>
+          <div class="flex flex-col items-center bg-blue-50 dark:bg-blue-900 rounded-xl p-3 shadow">
+            <span class="text-2xl">🤖</span>
+            <span class="text-sm text-gray-700 dark:text-gray-200 mt-1">AI Extraction</span>
+          </div>
+          <div class="flex flex-col items-center bg-yellow-50 dark:bg-yellow-900 rounded-xl p-3 shadow">
+            <span class="text-2xl">🔒</span>
+            <span class="text-sm text-gray-700 dark:text-gray-200 mt-1">Private & Secure</span>
+          </div>
+          <div class="flex flex-col items-center bg-pink-50 dark:bg-pink-900 rounded-xl p-3 shadow">
+            <span class="text-2xl">🎯</span>
+            <span class="text-sm text-gray-700 dark:text-gray-200 mt-1">Easy to Use</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer class="text-center text-gray-500 dark:text-gray-400 py-4">
+    &copy; 2025 Exam App. All rights reserved.
+  </footer>
+  <script>
+    // Dark mode toggle logic for nav button
+    const toggle = document.getElementById('dark-toggle');
+    const html = document.documentElement;
+    if (
+      localStorage.theme === 'dark' ||
+      (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
+    ) {
+      html.classList.add('dark');
+    } else {
+      html.classList.remove('dark');
+    }
+    if (toggle) {
+      toggle.addEventListener('click', () => {
+        html.classList.toggle('dark');
+        if (html.classList.contains('dark')) {
+          localStorage.theme = 'dark';
+        } else {
+          localStorage.theme = 'light';
+        }
+      });
+    }
+  </script>
+</body>
+</html>
