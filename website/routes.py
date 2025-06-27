@@ -9,18 +9,7 @@ import threading
 uploaded_files = {}  # {test_id: {'file':'', 'timestamp': '', 'data': None}}
 uploaded_files_lock = threading.Lock()
 
-def cleanup_expired_uploads():
-    print("* Starting cleanup thread for expired uploads")
-    while True:
-        time.sleep(60)  # Clear Test Data every 10 minutes
-        now = time.time()
-        keys_to_delete = []
-        with uploaded_files_lock:
-            for key, value in uploaded_files.items():
-                if now - value['timestamp'] > 60 * 10:
-                    keys_to_delete.append(key)
-            for key in keys_to_delete:
-                del uploaded_files[key]
+
 
 @main.route('/', methods=["GET", "POST"])
 def index():
