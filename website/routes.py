@@ -46,12 +46,13 @@ def get_gemini_data(test_id):
 
     # Process the file with Gemini (outside lock)
     data = call_gimini_progress(file_entry['file'])
+    print(data)
     with uploaded_files_lock:
         if test_id in uploaded_files:
             uploaded_files[test_id]['data'] = data
             del uploaded_files[test_id]['file']  # Remove the file bytes after processing
     organized_data = normalize_questions_dict(data)
-
+    
     if not organized_data:
         return jsonify({'error': 'No valid data found in the PDF'}), 400
 
